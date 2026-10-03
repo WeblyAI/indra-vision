@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#07111f">
+  <title>INDRA Vision — Digital Climate Intelligence</title>
+  <meta name="description" content="INDRA Vision tracks real-time weather, temperature and rainfall trends to help understand climate change.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      crossorigin="">
+</head>
+<body>
+  <div class="noise"></div>
+  <div class="aurora aurora-a"></div>
+  <div class="aurora aurora-b"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#home" aria-label="INDRA Vision home">
+      <span class="brand-mark">I</span>
+      <span><strong>INDRA</strong><small>VISION</small></span>
+    </a>
+    <nav>
+      <a href="#dashboard">Dashboard</a>
+      <a href="#temperature">Temperature</a>
+      <a href="#rainfall">Rainfall</a>
+      <a href="#map">India Map</a>
+      <a href="#compare">Compare</a>
+      <a href="#ai">Climate AI</a>
+    </nav>
+    <button class="nav-location" id="navLocation">⌖ My location</button>
+  </header>
+
+  <main id="home">
+    <section class="hero section">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="pulse"></span> DIGITAL CLIMATE INTELLIGENCE</div>
+        <h1>See today's weather.<br><em>Understand tomorrow's climate.</em></h1>
+        <p class="hero-text">
+          INDRA Vision connects live weather with historical temperature and rainfall trends,
+          turning climate data into something you can actually understand.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#dashboard">Explore climate data <span>↗</span></a>
+          <button class="btn btn-ghost" id="heroLocation">Use my location <span>⌖</span></button>
+        </div>
+        <div class="hero-meta">
+          <span>LIVE DATA</span><i></i><span>HISTORICAL TRENDS</span><i></i><span>INDIA FOCUS</span>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="orbit orbit-1"></div>
+        <div class="orbit orbit-2"></div>
+        <div class="earth real-map-shell">
+
+    <div id="heroMap" class="hero-map"></div>
+
+    <div class="map-vignette"></div>
+
+    <div class="map-crosshair">+</div>
+
+    <div class="map-live-badge">
+        <span></span> LIVE MAP
+    </div>
+
+</div>
+        <div class="floating-card card-location">
+          <span class="mini-label">CURRENT LOCATION</span>
+          <strong id="heroPlace">Detecting…</strong>
+          <small id="heroCoords">Waiting for location</small>
+        </div>
+        <div class="floating-card card-temp">
+          <span class="weather-icon" id="heroWeatherIcon">☀</span>
+          <strong><span id="heroTemp">--</span>°</strong>
+          <small id="heroCondition">Loading weather</small>
+        </div>
+      </div>
+    </section>
+
+    <section class="section dashboard" id="dashboard">
+      <div class="section-heading">
+        <div>
+          <span class="kicker">01 / LIVE SNAPSHOT</span>
+          <h2>Your atmosphere, <span>right now.</span></h2>
+        </div>
+        <div class="data-source">● LIVE WEATHER DATA <span id="lastUpdated">—</span></div>
+      </div>
+
+      <div class="location-bar">
+        <div class="location-main">
+          <span class="location-pin">⌖</span>
+          <div><small>MONITORING</small><strong id="placeName">Detecting your location…</strong></div>
+        </div>
+        <div class="location-actions">
+          <button class="small-btn" id="refreshWeather">↻ Refresh</button>
+          <button class="small-btn accent" id="openSearch">⌕ Explore a place</button>
+        </div>
+      </div>
+
+      <div class="weather-grid">
+        <article class="weather-main panel">
+          <div class="weather-main-top">
+            <div>
+              <span class="mini-label">CURRENT TEMPERATURE</span>
+              <div class="big-temp"><span id="currentTemp">--</span><sup>°C</sup></div>
+              <p id="currentCondition">Getting live conditions…</p>
+            </div>
+            <div class="giant-weather-icon" id="currentIcon">☀</div>
+          </div>
+          <div class="feels">Feels like <strong id="feelsLike">--°C</strong></div>
+          <div class="temperature-bar"><span id="tempBar"></span></div>
+          <div class="minmax"><span>Min <b id="dayMin">--°</b></span><span>Max <b id="dayMax">--°</b></span></div>
+        </article>
+
+        <article class="metric panel">
+          <span class="metric-icon">💧</span><span class="mini-label">HUMIDITY</span>
+          <strong><span id="humidity">--</span><small>%</small></strong>
+          <p>Relative humidity</p>
+        </article>
+        <article class="metric panel">
+          <span class="metric-icon">🌧</span><span class="mini-label">RAINFALL</span>
+          <strong><span id="rainfallNow">--</span><small> mm</small></strong>
+          <p>Current precipitation</p>
+        </article>
+        <article class="metric panel">
+          <span class="metric-icon">🌬</span><span class="mini-label">WIND</span>
+          <strong><span id="wind">--</span><small> km/h</small></strong>
+          <p>Current wind speed</p>
+        </article>
+        <article class="metric panel">
+          <span class="metric-icon">☀</span><span class="mini-label">UV INDEX</span>
+          <strong><span id="uv">--</span></strong>
+          <p>Solar exposure</p>
+        </article>
+      </div>
+      <p class="data-note">All live weather cards use the same fetched weather reading, so the temperature stays consistent across INDRA Vision.</p>
+    </section>
+
+    <section class="section analytics" id="temperature">
+      <div class="section-heading">
+        <div>
+          <span class="kicker">02 / TEMPERATURE TRENDS</span>
+          <h2>Is the planet <span>getting warmer?</span></h2>
+        </div>
+        <div class="range-control">
+          <button class="range active" data-years="10">10Y</button>
+          <button class="range" data-years="20">20Y</button>
+          <button class="range" data-years="30">30Y</button>
+        </div>
+      </div>
+
+      <div class="analytics-grid">
+        <article class="chart-panel panel large">
+          <div class="chart-title"><div><span class="mini-label">ANNUAL TEMPERATURE</span><h3 id="tempChartTitle">Average annual temperature</h3></div><span class="trend-pill" id="tempTrend">Analysing…</span></div>
+          <div class="chart-wrap"><canvas id="temperatureChart"></canvas></div>
+          <div class="chart-foot"><span>°C</span><span>Historical annual average • selected location</span></div>
+        </article>
+        <div class="insight-stack">
+          <article class="stat-panel panel"><span class="mini-label">PERIOD AVERAGE</span><strong id="avgTemp">--°C</strong><p>Mean annual temperature</p></article>
+          <article class="stat-panel panel"><span class="mini-label">WARMEST YEAR</span><strong id="warmestYear">—</strong><p id="warmestValue">—</p></article>
+          <article class="stat-panel panel"><span class="mini-label">COOLEST YEAR</span><strong id="coolestYear">—</strong><p id="coolestValue">—</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section analytics" id="rainfall">
+      <div class="section-heading">
+        <div>
+          <span class="kicker">03 / RAINFALL TRENDS</span>
+          <h2>Follow the <span>water cycle.</span></h2>
+        </div>
+        <div class="data-source">ANNUAL + MONTHLY ANALYSIS</div>
+      </div>
+      <div class="analytics-grid">
+        <article class="chart-panel panel large">
+          <div class="chart-title"><div><span class="mini-label">ANNUAL PRECIPITATION</span><h3>Rainfall over time</h3></div><span class="trend-pill" id="rainTrend">Analysing…</span></div>
+          <div class="chart-wrap"><canvas id="rainfallChart"></canvas></div>
+          <div class="chart-foot"><span>mm</span><span>Annual precipitation • selected location</span></div>
+        </article>
+        <article class="chart-panel panel">
+          <div class="chart-title"><div><span class="mini-label">MONTHLY PROFILE</span><h3>Rainfall pattern</h3></div></div>
+          <div class="chart-wrap short"><canvas id="monthlyChart"></canvas></div>
+          <div class="chart-foot"><span>mm</span><span>Last complete year</span></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section map-section" id="map">
+      <div class="section-heading">
+        <div>
+          <span class="kicker">04 / INTERACTIVE INDIA</span>
+          <h2>Explore climate <span>across India.</span></h2>
+        </div>
+        <div class="data-source">SELECT A REGION TO EXPLORE</div>
+      </div>
+
+      <div class="map-layout">
+        <div class="india-map panel">
+          <div class="map-grid"></div>
+          <div class="india-silhouette">
+            <span class="state s-north">NORTH</span>
+            <span class="state s-west">WEST</span>
+            <span class="state s-central">CENTRAL</span>
+            <span class="state s-east">EAST</span>
+            <span class="state s-south">SOUTH</span>
+            <span class="state s-ne">N.E.</span>
+          </div>
+          <div class="map-caption"><span>INDIA</span><small>Interactive climate region</small></div>
+        </div>
+
+        <div class="region-panel panel">
+          <span class="mini-label">SELECTED REGION</span>
+          <h3 id="regionName">Your current region</h3>
+          <p id="regionText">Use your location or explore a city to load climate information.</p>
+          <div class="region-stats">
+            <div><span>LIVE TEMP</span><strong id="regionTemp">--°C</strong></div>
+            <div><span>HUMIDITY</span><strong id="regionHumidity">--%</strong></div>
+            <div><span>RAINFALL</span><strong id="regionRain">-- mm</strong></div>
+          </div>
+          <button class="btn btn-primary full" id="regionExplore">Explore this region ↗</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section compare-section" id="compare">
+      <div class="section-heading">
+        <div>
+          <span class="kicker">05 / YEAR COMPARISON</span>
+          <h2>Put two years <span>side by side.</span></h2>
+        </div>
+      </div>
+
+      <div class="compare-controls panel">
+        <div><label>YEAR A</label><select id="yearA"></select></div>
+        <div class="vs">VS</div>
+        <div><label>YEAR B</label><select id="yearB"></select></div>
+        <button class="btn btn-primary" id="compareBtn">Compare years</button>
+      </div>
+
+      <div class="comparison-grid">
+        <article class="compare-card panel"><span>🌡 TEMPERATURE</span><strong id="compareTemp">—</strong><small>difference in annual average</small></article>
+        <article class="compare-card panel"><span>🌧 RAINFALL</span><strong id="compareRain">—</strong><small>difference in annual precipitation</small></article>
+        <article class="compare-card panel"><span>📊 CHANGE</span><strong id="comparePercent">—</strong><small>rainfall percentage change</small></article>
+        <article class="compare-card panel"><span>⚠ EXTREME INDICATOR</span><strong id="compareIndicator">—</strong><small>based on temperature/rainfall shift</small></article>
+      </div>
+    </section>
+
+    <section class="section ai-section" id="ai">
+      <div class="ai-shell panel">
+        <div class="ai-copy">
+          <span class="kicker">06 / CLIMATE AI</span>
+          <h2>Ask <span>INDRA.</span></h2>
+          <p>Ask questions about the climate data currently displayed. INDRA explains the numbers in simple language instead of hiding them behind complicated charts.</p>
+          <div class="suggestions">
+            <button data-question="Why is the temperature trend changing?">Why is the temperature trend changing?</button>
+            <button data-question="How has rainfall changed?">How has rainfall changed?</button>
+            <button data-question="What does this data mean for my region?">What does this mean for my region?</button>
+          </div>
+        </div>
+        <div class="ai-chat">
+          <div class="chat-head"><span class="ai-orb">I</span><div><strong>INDRA Climate AI</strong><small>Data-aware assistant</small></div><span class="online">● ONLINE</span></div>
+          <div class="messages" id="messages">
+            <div class="message bot">Hello. I can explain the climate data currently loaded on this page. Ask me about temperature, rainfall, trends or comparisons.</div>
+          </div>
+          <form class="chat-form" id="chatForm">
+            <input id="chatInput" placeholder="Ask about this climate data…" autocomplete="off">
+            <button>↑</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="section awareness">
+      <div class="section-heading">
+        <div><span class="kicker">07 / RESEARCH & AWARENESS</span><h2>Data becomes useful when <span>people understand it.</span></h2></div>
+      </div>
+      <div class="awareness-grid">
+        <article class="awareness-card"><b>01</b><span>🌍</span><h3>Causes</h3><p>Greenhouse gases, land-use change, energy use and other climate drivers.</p></article>
+        <article class="awareness-card"><b>02</b><span>🌾</span><h3>India & Agriculture</h3><p>Understand how temperature and rainfall shifts can affect crops and food systems.</p></article>
+        <article class="awareness-card"><b>03</b><span>💧</span><h3>Water</h3><p>Explore why changing rainfall patterns matter for water availability.</p></article>
+        <article class="awareness-card"><b>04</b><span>🫶</span><h3>What students can do</h3><p>Learn practical actions around energy, waste, transport and climate awareness.</p></article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-brand"><span class="brand-mark">I</span><div><strong>INDRA VISION</strong><small>Digital Climate Intelligence</small></div></div>
+    <p>Built for Environmental Studies • Live weather + historical climate analysis</p>
+    <span>© 2026 INDRA Vision</span>
+  </footer>
+
+  <div class="modal" id="searchModal" aria-hidden="true">
+    <div class="modal-box">
+      <button class="modal-close" id="closeSearch">×</button>
+      <span class="kicker">EXPLORE ANYWHERE</span>
+      <h2>Search a place.</h2>
+      <p>Try a city, state or country. INDRA Vision will load its live weather and climate data.</p>
+      <form id="searchForm">
+        <input id="searchInput" placeholder="e.g. Patna, Mumbai, Delhi…" required>
+        <button class="btn btn-primary">Explore ↗</button>
+      </form>
+      <div class="quick-search">
+        <button data-city="Delhi">Delhi</button><button data-city="Mumbai">Mumbai</button>
+        <button data-city="Bengaluru">Bengaluru</button><button data-city="Jaipur">Jaipur</button>
+        <button data-city="Kolkata">Kolkata</button><button data-city="Leh">Leh</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        crossorigin=""></script>
+  <script src="script.js"></script>
+</body>
+</html>
